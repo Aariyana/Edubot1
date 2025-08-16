@@ -1,6 +1,7 @@
-
+  # (যদি `src` package হিচাপে থাকে)
 import os
 import asyncio
+from src.services.db import db
 from aiogram import Bot, Dispatcher, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command
