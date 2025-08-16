@@ -1,0 +1,43 @@
+name: nightly-sync
+on:
+  schedule:
+    - cron: '17 18 * * *'   # daily 18:17 UTC (~Asia/Kolkata 23:47)
+  workflow_dispatch: {}
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -r requirements.txt
+      - run: python scripts/seed_subjects.py
+      - name: Cache new PDFs via CSE
+        run: python - << 'PY'
+from src.services.cse import search_pdfs
+from src.services.db import db
+SAMPLES = [
+  ("class 6 maths textbook ncert", "6","Maths","en"),
+  ("class 10 science exemplar ncert", "10","Science","en"),
+  ("seba class 9 assam syllabus", "9","General","as"),
+]
+for q,cl,sub,lang in SAMPLES:
+  res = search_pdfs(q, num=5)
+  for it in res:
+    db.pdfs.update_one({"url": it['link']}, {"$set": {
+      "title": it['title'],
+      "url": it['link'],
+      "source": it['displayLink'],
+      "class_level": cl,
+      "subject": sub,
+      "language": lang,
+    }}, upsert=True)
+print("cached")
+PY
+      - name: (Optional) Post to Blogger
+        if: ${{ env.BLOGGER_BLOG_ID != '' }}
+        run: python - << 'PY'
+print('TODO: implement blogger posting with OAuth tokens')
+PY
