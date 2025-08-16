@@ -1,20 +1,19 @@
-from aiogram import Router
-from aiogram.filters import Command
-from aiogram.types import Message
 from datetime import datetime, timedelta
-from src.services.db import db
 
-router = Router()
+# ... inside start command while updating referrer ...
+new_count = len(ref_user.get("referrals", [])) + 1
+update_data = {"$push": {"referrals": tg_id}}
 
-def register(dp):
-    dp.include_router(router)
+# ✅ Every 10 referrals = 3 hours premium
+if new_count % 10 == 0:
+    premium_until = ref_user.get("premium_until")
+    if premium_until and premium_until > datetime.utcnow():
+        premium_until += timedelta(hours=3)
+    else:
+        premium_until = datetime.utcnow() + timedelta(hours=3)
+    update_data["$set"] = {
+        "is_premium": True,
+        "premium_until": premium_until
+    }
 
-@router.message(Command("referral"))
-async def referral(m: Message):
-    u = db.users.find_one({"tg_id": m.from_user.id})
-    if not u:
-        return await m.answer("Use /start first")
-    await m.answer(
-      "Share your link: t.me/YourBot?start=" + u.get("referral_code", "") +
-      "\nEach successful join gives 1 day premium."
-    )
+users_col.update_one({"tg_id": ref_user["tg_id"]}, update_data)
