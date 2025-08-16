@@ -1,4 +1,10 @@
-  # (যদি `src` package হিচাপে থাকে)
+import sys
+from pathlib import Path
+
+# Railway-ত /app হৈছে root
+sys.path.append(str(Path(__file__).parent.parent))  # /app/src -> /app
+
+from src.services.db import db  # এতিয়া কাম কৰিব
 import os
 import asyncio
 from src.services.db import db
