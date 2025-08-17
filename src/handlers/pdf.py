@@ -2,7 +2,7 @@ from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import Message, InputFile
 from datetime import date
-from src.services.db import db
+from src.db import db
 from src.services.cse import search_pdfs
 from src.services.i18n import t
 import requests
