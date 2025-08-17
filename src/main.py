@@ -4,15 +4,15 @@ from pathlib import Path
 # Railway-ত /app হৈছে root
 sys.path.append(str(Path(__file__).parent.parent))  # /app/src -> /app
 
-from src.db import db, users_col import db  # এতিয়া কাম কৰিব
+from src.db import db 
 import os
 import asyncio
-from src.db import db, users_col import db
+from src.db import db
 from aiogram import Bot, Dispatcher, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command
 from fastapi import FastAPI, Request
-from src.services.db import db
+from src.db import db
 from src.handlers import start, help, profile, referral, premium, qa, pdf, quiz
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
