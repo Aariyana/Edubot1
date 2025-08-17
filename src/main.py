@@ -4,10 +4,10 @@ from pathlib import Path
 # Railway-ত /app হৈছে root
 sys.path.append(str(Path(__file__).parent.parent))  # /app/src -> /app
 
-from src.services.db import db  # এতিয়া কাম কৰিব
+from src.db import db, users_col import db  # এতিয়া কাম কৰিব
 import os
 import asyncio
-from src.services.db import db
+from src.db import db, users_col import db
 from aiogram import Bot, Dispatcher, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command
