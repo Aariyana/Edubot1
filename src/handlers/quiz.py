@@ -1,7 +1,7 @@
 from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import Message
-from src.services.db import db
+from src.db import db
 
 router = Router()
 
