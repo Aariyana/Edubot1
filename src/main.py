@@ -21,3 +21,9 @@ if __name__ == "__main__":
         asyncio.run(main())
     except (KeyboardInterrupt, SystemExit):
         logging.info("Bot stopped.")
+        
+        from src.handlers import help, profile, referral
+
+dp.include_router(help.router)
+dp.include_router(profile.router)
+dp.include_router(referral.router)
