@@ -4,6 +4,8 @@ import os
 from aiogram import Bot, Dispatcher
 from src.handlers import start
 from fastapi import FastAPI
+from handlers.start import router as start_router
+dp.include_router(start_router)
 
 app = FastAPI()
 
