@@ -2,6 +2,13 @@ import asyncio
 import logging
 import os
 from aiogram import Bot, Dispatcher
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/")
+def home():
+    return {"status": "ok"}
 
 # Import all handlers
 from src.handlers import start, help, profile, referral, premium, qa, pdf, quiz
