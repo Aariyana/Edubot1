@@ -3,10 +3,10 @@ import logging
 from fastapi import FastAPI
 from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
-from src.handlers import start, profile  # Your handlers
-from src.db import db  # MongoDB connection
+from src.handlers import start, profile  # তোমাৰ হেণ্ডলাৰসমূহ
+from src.db import db  # MongoDB সংযোগ
 
-# Configure logging
+# লগিং কনফিগাৰ কৰক
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -18,30 +18,28 @@ def health_check():
 
 async def run_bot():
     try:
-        # Initialize bot
+        # বট ইনিচিয়েলাইজ কৰক
         bot = Bot(token=os.getenv("BOT_TOKEN"), parse_mode=ParseMode.HTML)
         dp = Dispatcher()
 
-        # Register handlers
+        # হেণ্ডলাৰ ৰেজিষ্টাৰ কৰক
         dp.include_router(start.router)
         dp.include_router(profile.router)
-        # You can add other handlers here
+        # অন্যান্য হেণ্ডলাৰ ইয়াত যোগ কৰিব পাৰে
 
-        logger.info("Bot is starting...")
+        logger.info("বট চালু হৈছে...")
         await dp.start_polling(bot)
 
     except Exception as e:
-        logger.error(f"Error: {e}")
+        logger.error(f"ত্ৰুটি: {e}")
         raise
 
 if __name__ == "__main__":
     import uvicorn
     import asyncio
 
-    # FastAPI server (on PORT 8000)
+    # FastAPI চাৰ্ভাৰ (PORT 8000 ত)
     uvicorn.run(app, host="0.0.0.0", port=int(os.getenv("PORT", 8000)))
 
-    # Run the bot (in background)
-    asyncio.run(run_bot())"
-
-update with this
+    # বট চালু কৰক (Backgroundত)
+    asyncio.run(run_bot())
