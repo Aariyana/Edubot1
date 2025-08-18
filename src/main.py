@@ -11,7 +11,9 @@ logging.basicConfig(level=logging.INFO)
 app = FastAPI()
 
 # Bot setup
-bot = Bot(token=os.getenv("BOT_TOKEN"))
+bot = Bot(token=os.getenv("BOT_TOKEN")
+         if not BOT_TOKEN:
+    raise ValueError("BOT_TOKEN is missing! Please set it in Railway variables."))
 dp = Dispatcher()
 
 # Register routers
