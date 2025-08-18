@@ -3,7 +3,13 @@ import logging
 import os
 from aiogram import Bot, Dispatcher
 from src.handlers import start
+from fastapi import FastAPI
 
+app = FastAPI()
+
+@app.get("/")
+def home():
+    return {"status": "ok"}
 logging.basicConfig(level=logging.INFO)
 
 async def main():
