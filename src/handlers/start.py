@@ -1,7 +1,7 @@
 from aiogram import Router
 from aiogram.types import Message
 from aiogram.filters import CommandStart
-from src.services.db import db
+from src.db import db
 from src.services.i18n import t
 import secrets
 
