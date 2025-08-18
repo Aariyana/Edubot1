@@ -1,26 +1,16 @@
-import sys
+iimport sys
 from pathlib import Path
-<<<<<<< HEAD
-
 # Railway-ত /app হৈছে root
 sys.path.append(str(Path(__file__).parent.parent))  # /app/src
-
-=======
 # Railway-ত /app হৈছে root
 sys.path.append(str(Path(__file__).parent.parent))  # /app/src -> /app
 from src.db import db
-from src.db import db 
->>>>>>> 06c21ba (Local changes before rebase)
 import os
 import asyncio
 from aiogram import Bot, Dispatcher, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command
 from fastapi import FastAPI, Request
-<<<<<<< HEAD
-
-=======
->>>>>>> 06c21ba (Local changes before rebase)
 from src.db import db
 from src.handlers import start, help, profile, referral, premium, qa, pdf, quiz
 
