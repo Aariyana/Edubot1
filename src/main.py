@@ -3,37 +3,35 @@ import logging
 import os
 from aiogram import Bot, Dispatcher
 from fastapi import FastAPI
-
-app = FastAPI()
-
-@app.get("/")
-def home():
-    return {"status": "ok"}
-
-# Import all handlers
-from src.handlers import start, help, profile, referral, premium, qa, pdf, quiz
+from src.handlers import start  # তোমাৰ bot handlers
 
 logging.basicConfig(level=logging.INFO)
 
-async def main():
-    bot = Bot(token=os.getenv("BOT_TOKEN"))
-    dp = Dispatcher()
+# FastAPI app (Railway uvicorn ত app launch হব)
+app = FastAPI()
 
-    # Register routers (all handlers)
-    dp.include_router(start.router)
-    dp.include_router(help.router)
-    dp.include_router(profile.router)
-    dp.include_router(referral.router)
-    dp.include_router(premium.router)
-    dp.include_router(qa.router)
-    dp.include_router(pdf.router)
-    dp.include_router(quiz.router)
+# Bot setup
+bot = Bot(token=os.getenv("BOT_TOKEN"))
+dp = Dispatcher()
 
-    # Start polling
-    await dp.start_polling(bot)
+# Register routers
+dp.include_router(start.router)
 
-if __name__ == "__main__":
+
+@app.on_event("startup")
+async def on_startup():
+    """Start bot polling when FastAPI starts"""
+    asyncio.create_task(start_bot())
+
+
+async def start_bot():
     try:
-        asyncio.run(main())
-    except (KeyboardInterrupt, SystemExit):
-        logging.info("Bot stopped.")
+        await dp.start_polling(bot)
+    except Exception as e:
+        logging.error(f"Bot polling crashed: {e}")
+
+
+# Optional healthcheck endpoint
+@app.get("/")
+async def root():
+    return {"status": "ok", "message": "Bot is running"}
