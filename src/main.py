@@ -1,4 +1,4 @@
-iimport sys
+import sys
 from pathlib import Path
 # Railway-ত /app হৈছে root
 sys.path.append(str(Path(__file__).parent.parent))  # /app/src
