@@ -1,50 +1,45 @@
-import asyncio
-import logging
 import os
+import logging
 from fastapi import FastAPI
 from aiogram import Bot, Dispatcher
-from aiogram.types import Update
-from aiogram.webhook.aiohttp_server import SimpleRequestHandler
-from aiohttp import web
-from src.handlers import start  # নিশ্চিত কৰক যে এই import শুদ্ধ
+from aiogram.enums import ParseMode
+from src.handlers import start, profile  # তোমাৰ হেণ্ডলাৰসমূহ
+from src.db import db  # MongoDB সংযোগ
 
 # লগিং কনফিগাৰ কৰক
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# FastAPI এপ্লিকেচন সৃষ্টি কৰক
 app = FastAPI()
 
 @app.get("/")
-def home():
-    return {"status": "ok"}
+def health_check():
+    return {"status": "active", "bot": "Edu Assam Bot"}
 
-async def on_startup(bot: Bot):
-    await bot.set_webhook("https://your-render-url.onrender.com/webhook")
+async def run_bot():
+    try:
+        # বট ইনিচিয়েলাইজ কৰক
+        bot = Bot(token=os.getenv("BOT_TOKEN"), parse_mode=ParseMode.HTML)
+        dp = Dispatcher()
 
-async def main():
-    # কনফিগাৰেচন লোড কৰক
-    BOT_TOKEN = os.getenv("BOT_TOKEN")
-    if not BOT_TOKEN:
-        raise ValueError("BOT_TOKEN এনভাইৰণমেন্ট ভেৰিয়েবল সেট কৰক!")
-    
-    bot = Bot(token=BOT_TOKEN)
-    dp = Dispatcher()
-    
-    # ৰাউটাৰ ৰেজিষ্টাৰ কৰক
-    dp.include_router(start.router)
-    
-    # Webhook চেট আপ কৰক (ঐচ্ছিক)
-    if os.getenv("WEBHOOK_MODE", "false").lower() == "true":
-        await on_startup(bot)
-        handler = SimpleRequestHandler(dp, bot=bot)
-        handler.register(app, path="/webhook")
-    else:
-        # Polling মোড
+        # হেণ্ডলাৰ ৰেজিষ্টাৰ কৰক
+        dp.include_router(start.router)
+        dp.include_router(profile.router)
+        # অন্যান্য হেণ্ডলাৰ ইয়াত যোগ কৰিব পাৰে
+
+        logger.info("বট চালু হৈছে...")
         await dp.start_polling(bot)
 
+    except Exception as e:
+        logger.error(f"ত্ৰুটি: {e}")
+        raise
+
 if __name__ == "__main__":
-    try:
-        asyncio.run(main())
-    except (KeyboardInterrupt, SystemExit):
-        logger.info("বট বন্ধ কৰা হ'ল")
+    import uvicorn
+    import asyncio
+
+    # FastAPI চাৰ্ভাৰ (PORT 8000 ত)
+    uvicorn.run(app, host="0.0.0.0", port=int(os.getenv("PORT", 8000)))
+
+    # বট চালু কৰক (Backgroundত)
+    asyncio.run(run_bot())
