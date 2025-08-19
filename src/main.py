@@ -1,40 +1,32 @@
 import os
 import logging
+import asyncio
 from fastapi import FastAPI
 from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
-from src.handlers import start, profile
-from src.db import db
+from src.handlers import start, profile, referral, notify, payment
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# FastAPI app
 app = FastAPI()
 
 @app.get("/")
-def health_check():
-    return {"status": "active", "bot": "Edu Assam Bot"}
+def home():
+    return {"status": "active", "bot": "Edu Assam Bot", "help": "If you have any quarry send massage in @abhijitedu to help"}
 
-# Aiogram bot runner
 async def run_bot():
-    try:
-        bot = Bot(token=os.getenv("BOT_TOKEN"), parse_mode=ParseMode.HTML)
-        dp = Dispatcher()
+    bot = Bot(token=os.getenv("BOT_TOKEN"), parse_mode=ParseMode.HTML)
+    dp = Dispatcher()
 
-        # include handlers
-        dp.include_router(start.router)
-        dp.include_router(profile.router)
+    dp.include_router(start.router)
+    dp.include_router(profile.router)
+    dp.include_router(referral.router)
+    dp.include_router(notify.router)
+    dp.include_router(payment.router)
 
-        logger.info("Bot চালু হৈছে...")
-        await dp.start_polling(bot)
+    logger.info("🤖 Bot started...")
+    await dp.start_polling(bot)
 
-    except Exception as e:
-        logger.error(f"Bot error: {e}")
-        raise
-
-# FastAPI startup event → run bot in background
-@app.on_event("startup")
-async def startup_event():
-    import asyncio
-    asyncio.create_task(run_bot())
+if __name__ == "__main__":
+    asyncio.run(run_bot())
