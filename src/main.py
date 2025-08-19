@@ -4,7 +4,7 @@ import asyncio
 from fastapi import FastAPI
 from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
-from handlers import start, profile, referral, notify, payment
+from src.handlers import start, profile, referral, notify, payment
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
