@@ -1,5 +1,5 @@
-import os
-from motor.motor_asyncio import AsyncIOMotorClient
+import pymongo
+from pymongo import Mongoclient
 
 MONGO_URI = os.getenv("MONGO_URI")
 client = AsyncIOMotorClient(MONGO_URI)
