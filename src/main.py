@@ -20,7 +20,12 @@ def health_check():
 
 # Bot চলোৱাৰ function
 async def run_bot():
-    bot = Bot(token=os.getenv("BOT_TOKEN"), parse_mode=ParseMode.HTML)
+    from aiogram.client.default import DefaultBotProperties
+
+bot = Bot(
+    token=os.getenv("BOT_TOKEN"),
+    default=DefaultBotProperties(parse_mode=ParseMode.HTML)
+)
     dp = Dispatcher()
 
     # হেণ্ডলাৰ ৰেজিষ্টাৰ কৰক
