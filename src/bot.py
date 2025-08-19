@@ -1,12 +1,8 @@
 from aiogram import Bot, Dispatcher
 from aiogram.types import BotCommand
-from src.handlers import pdf as pdf_handler
-from src.handlers import referral as ref_handler
-from src.handlers import premium as prem_handler
-from src.handlers import quiz as quiz_handler   # if added
-from src.handlers import profile as profile_handler
+from src.handlers import start, profile, referral, premium, quiz, pdf, help
 
-async def set_cmds(bot: Bot):
+async def set_commands(bot: Bot):
     await bot.set_my_commands([
         BotCommand(command="start", description="Start the bot"),
         BotCommand(command="pdf", description="Find & get PDFs"),
@@ -14,11 +10,14 @@ async def set_cmds(bot: Bot):
         BotCommand(command="premium", description="Your premium status"),
         BotCommand(command="quiz", description="Daily quiz"),
         BotCommand(command="profile", description="Your profile"),
+        BotCommand(command="help", description="Help information"),
     ])
 
 def register(dp: Dispatcher):
-    dp.include_router(pdf_handler.router)
-    dp.include_router(ref_handler.router)
-    dp.include_router(prem_handler.router)
-    dp.include_router(quiz_handler.router)
-    dp.include_router(profile_handler.router)
+    dp.include_router(start.router)
+    dp.include_router(pdf.router)
+    dp.include_router(referral.router)
+    dp.include_router(premium.router)
+    dp.include_router(quiz.router)
+    dp.include_router(profile.router)
+    dp.include_router(help.router)
