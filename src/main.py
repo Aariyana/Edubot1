@@ -5,7 +5,6 @@ from fastapi import FastAPI
 from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
 from src.bot import register, set_commands
-from src.utils.scheduler import on_startup
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
