@@ -18,18 +18,16 @@ dp = Dispatcher()
 async def start_handler(message: types.Message):
     await message.answer("👋 Hello! EduBot is running successfully on Render.")
 
-# ✅ FastAPI app
-app = FastAPI()
+# ✅ FastAPI app with lifespan
+async def lifespan(app: FastAPI):
+    # Startup
+    asyncio.create_task(dp.start_polling(bot))
+    yield
+    # Shutdown
+    await bot.session.close()
+
+app = FastAPI(lifespan=lifespan)
 
 @app.get("/")
 async def root():
     return {"status": "EduBot is running 🚀"}
-
-# ✅ Background task to run bot polling
-async def run_bot():
-    await dp.start_polling(bot)
-
-# ✅ Startup event
-@app.on_event("startup")
-async def on_startup():
-    asyncio.create_task(run_bot())
