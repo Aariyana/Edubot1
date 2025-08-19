@@ -9,16 +9,18 @@ router = Router()
 @router.message(Command("pdf"))
 async def on_pdf(m: Message):
     lang = (m.from_user.language_code or "en").split("-")[0]
-    users = db.users
-    u = users.find_one({"tg_id": m.from_user.id})
-
-    if not u:
+    user = await db.users.find_one({"tg_id": m.from_user.id})
+    
+    if not user:
         await m.answer(t(lang, "profile_not_found"))
         return
-
-    if u.get("daily_pdf_count", 0) >= 3 and not u.get("is_premium", False):
+    
+    if user.get("daily_pdf_count", 0) >= 3 and not user.get("is_premium", False):
         await m.answer(t(lang, "pdf_limit"))
         return
-
-    users.update_one({"tg_id": m.from_user.id}, {"$inc": {"daily_pdf_count": 1}})
+    
+    await db.users.update_one(
+        {"tg_id": m.from_user.id},
+        {"$inc": {"daily_pdf_count": 1}}
+    )
     await m.answer(t(lang, "pdf_generated"))
