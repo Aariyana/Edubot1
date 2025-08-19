@@ -1,6 +1,6 @@
-import pymongo
-from pymongo import Mongoclient
+import os
+from motor.motor_asyncio import AsyncIOMotorClient
 
-MONGO_URI = os.getenv("MONGO_URI")
-client = AsyncIOMotorClient(MONGO_URI)
-db = client["edu_bot"]
+MONGO_URL = os.getenv("MONGODB_URI")  # Render uses MONGODB_URI
+client = AsyncIOMotorClient(MONGO_URL)
+db = client.edu_bot
