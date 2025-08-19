@@ -1,10 +1,6 @@
 import os
-from pymongo import MongoClient
+from motor.motor_asyncio import AsyncIOMotorClient
 
-client = MongoClient(os.getenv("MONGODB_URI"))
-db = client[os.getenv("MONGODB_DB", "edubot")]
-#Define collections
-users_col = db["users"]
-referrals_col = db["referrals"]
-premium_col = db["premium"]
-quiz_col = db["quiz"]
+MONGO_URI = os.getenv("MONGO_URI")
+client = AsyncIOMotorClient(MONGO_URI)
+db = client["edu_bot"]
