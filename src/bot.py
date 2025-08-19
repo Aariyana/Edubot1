@@ -1,29 +1,26 @@
+# src/bot.py - Simplified version
 from aiogram import Bot, Dispatcher
 from aiogram.types import BotCommand
-from src.handlers import start, profile, referral, premium, quiz, pdf, help, admin, leaderboard, notify, payment
 
 async def set_commands(bot: Bot):
     await bot.set_my_commands([
         BotCommand(command="start", description="Start the bot"),
-        BotCommand(command="pdf", description="Find & get PDFs"),
-        BotCommand(command="referral", description="Referral link & rewards"),
-        BotCommand(command="premium", description="Your premium status"),
-        BotCommand(command="quiz", description="Daily quiz"),
-        BotCommand(command="profile", description="Your profile"),
-        BotCommand(command="help", description="Help information"),
-        BotCommand(command="notify", description="Notify admin"),
-        BotCommand(command="pay", description="Payment methods"),
+        BotCommand(command="help", description="Show help"),
     ])
 
 def register(dp: Dispatcher):
-    dp.include_router(start.router)
-    dp.include_router(pdf.router)
-    dp.include_router(referral.router)
-    dp.include_router(premium.router)
-    dp.include_router(quiz.router)
-    dp.include_router(profile.router)
-    dp.include_router(help.router)
-    dp.include_router(admin.router)
-    dp.include_router(leaderboard.router)
-    dp.include_router(notify.router)
-    dp.include_router(payment.router)
+    # Create basic router here itself
+    from aiogram import Router, types
+    from aiogram.filters import Command
+    
+    router = Router()
+    
+    @router.message(Command("start"))
+    async def start_handler(message: types.Message):
+        await message.answer("🎓 Welcome to EduBot Assam!")
+    
+    @router.message(Command("help"))
+    async def help_handler(message: types.Message):
+        await message.answer("ℹ️ Help: Use /start to begin")
+    
+    dp.include_router(router)
