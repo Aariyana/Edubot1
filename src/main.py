@@ -22,7 +22,7 @@ async def run_bot():
     # Register handlers and setup
     register(dp)
     await set_commands(bot)
-    await on_startup()
+   
     
     logger.info("🤖 Bot started...")
     await dp.start_polling(bot)
