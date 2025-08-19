@@ -1,6 +1,6 @@
 from aiogram import Router, types
 from aiogram.filters import CommandStart
-from src.db import db
+from db import db
 from src.services.i18n import t
 import secrets
 
