@@ -17,6 +17,7 @@ def register(dp: Dispatcher):
     dp.include_router(start.router)
     dp.include_router(profile.router)
     dp.include_router(quiz.router)  # quiz router add কৰক
+    dp.include_router(pdf.router)
 
 from src.handlers import fallback
 
