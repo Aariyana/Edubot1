@@ -1,6 +1,6 @@
 from aiogram import Bot, Dispatcher
 from aiogram.types import BotCommand
-from src.handlers import start, profile, referral, premium, quiz, pdf, help, admin, leaderboard, notify, payment
+from src.handlers import start, profile, referral, premium, quiz, pdf, help, admin, leaderboard, notifier, payment
 
 async def set_commands(bot: Bot):
     await bot.set_my_commands([
@@ -25,5 +25,5 @@ def register(dp: Dispatcher):
     dp.include_router(help.router)
     dp.include_router(admin.router)
     dp.include_router(leaderboard.router)
-    dp.include_router(notify.router)
+    dp.include_router(notifier.router)
     dp.include_router(payment.router)
