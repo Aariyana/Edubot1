@@ -3,8 +3,19 @@ from aiogram.filters import Command
 
 router = Router()
 
-@router.message(Command("refer"))
-async def cmd_refer(message: types.Message):
-    user_id = message.from_user.id
-    ref_link = f"https://t.me/{message.bot.username}?start={user_id}"
-    await message.answer(f"📨 Your referral link:\n{ref_link}\n\nInvite 10 friends = Get 4 hours free!")
+@router.message(Command("referral"))
+async def cmd_referral(message: types.Message):
+    referral_text = """
+    📨 **Referral Program**
+    
+    Invite your friends and earn rewards!
+    
+    Your referral link: 
+    `https://t.me/Edu_assam_bot?start=ref_{your_id}`
+    
+    🎁 Rewards:
+    - 10 referrals = 4 hours premium
+    - 50 referrals = 16 hours premium
+    """
+    
+    await message.answer(referral_text, parse_mode="Markdown")
