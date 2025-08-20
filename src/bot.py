@@ -1,26 +1,25 @@
-# src/bot.py - Simplified version
 from aiogram import Bot, Dispatcher
 from aiogram.types import BotCommand
+from src.handlers import start, profile, quiz  # quiz add কৰক
+
 
 async def set_commands(bot: Bot):
     await bot.set_my_commands([
         BotCommand(command="start", description="Start the bot"),
-        BotCommand(command="help", description="Show help"),
+        BotCommand(command="pdf", description="Find PDFs"),
+        BotCommand(command="quiz", description="Daily quiz"),
+        BotCommand(command="question", description="Ask questions"),
+        BotCommand(command="profile", description="Your profile"),
+        BotCommand(command="help", description="Help information"),
     ])
 
 def register(dp: Dispatcher):
-    # Create basic router here itself
-    from aiogram import Router, types
-    from aiogram.filters import Command
-    
-    router = Router()
-    
-    @router.message(Command("start"))
-    async def start_handler(message: types.Message):
-        await message.answer("🎓 Welcome to EduBot Assam!")
-    
-    @router.message(Command("help"))
-    async def help_handler(message: types.Message):
-        await message.answer("ℹ️ Help: Use /start to begin")
-    
-    dp.include_router(router)
+    dp.include_router(start.router)
+    dp.include_router(profile.router)
+    dp.include_router(quiz.router)  # quiz router add কৰক
+
+from src.handlers import fallback
+
+def register(dp: Dispatcher):
+    # ... other routers
+    dp.include_router(fallback.router)  # শেষত add কৰক
