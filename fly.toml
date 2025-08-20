@@ -1,0 +1,20 @@
+app = "edubot1"
+
+primary_region = "sin"
+
+[build]
+
+[env]
+  PYTHONUNBUFFERED = "1"
+  TZ = "Asia/Kolkata"
+
+[experimental]
+  auto_rollback = true
+
+[[services]]
+  internal_port = 8080
+  processes = ["app"]
+
+  [[services.ports]]
+    handlers = []
+    port = 8080
