@@ -1,19 +1,15 @@
-from aiogram import Bot, Dispatcher
-from aiogram.types import BotCommand
-from src.handlers import start, profile, pdf, referral, quiz
+@@ -1,11 +1,16 @@
+from src.db import db
+async def get_user(tg_id: int):
+    return await db.users.find_one({"tg_id": tg_id})
+async def get_top_users(limit=10):
+    return await db.users.find().sort("reward_points", -1).limit(limit).to_list(length=limit)
 
-async def set_commands(bot: Bot):
-    await bot.set_my_commands([
-        BotCommand(command="start", description="Start the bot"),
-        BotCommand(command="pdf", description="Find PDFs"),
-        BotCommand(command="referral", description="Referral program"),
-        BotCommand(command="quiz", description="Daily quiz"),
-        BotCommand(command="profile", description="Your profile"),
-    ])
+async def count_users():
+    return await db.users.count_documents({})
 
-def register(dp: Dispatcher):
-    dp.include_router(start.router)
-    dp.include_router(profile.router)
-    dp.include_router(pdf.router)
-    dp.include_router(referral.router)
-    dp.include_router(quiz.router)
+async def get_all_users():
+    return await db.users.find().to_list(length=None)
+
+async def reset_daily_pdfs():
+    await db.users.update_many({}, {"$set": {"daily_pdf_count": 0}}
