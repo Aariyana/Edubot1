@@ -11,7 +11,7 @@ async def cmd_referral(message: types.Message):
     Invite your friends and earn rewards!
     
     Your referral link: 
-    `https://t.me/Edu_assam_bot?start=ref_{your_id}`
+    `https://t.me/Edu_assam_bot?start=ref_(user_id)`
     
     🎁 Rewards:
     - 10 referrals = 4 hours premium
