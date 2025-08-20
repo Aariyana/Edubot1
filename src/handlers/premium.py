@@ -1,27 +1,24 @@
-# src/handlers/premium.py
-
 from aiogram import Router
 from aiogram.types import Message
 from aiogram.filters import Command
-from src.db import db
-from src.services.i18n import t
+from datetime import datetime
+from ..db import users
 
 router = Router()
 
 @router.message(Command("premium"))
-async def on_premium(m: Message):
-    lang = (m.from_user.language_code or "en").split("-")[0]
-    users = db.users
+async def premium_info(m: Message):
+    u = await users.find_one({"tg_id": m.from_user.id}) or {}
+    prem = u.get("is_premium", False)
+    until = u.get("premium_until")
+    if prem and until and until < datetime.utcnow():
+        # expired
+        await users.update_one({"tg_id": u["tg_id"]}, {"$set": {"is_premium": False}, "$unset": {"premium_until": 1}})
+        prem = False
+        until = None
 
-    u = users.find_one({"tg_id": m.from_user.id})
-    if not u:
-        await m.answer(t(lang, "profile_not_found"))
-        return
-
-    if u.get("is_premium", False):
-        await m.answer(t(lang, "already_premium"))
+    if prem:
+        until_txt = until.strftime("%Y-%m-%d %H:%M:%S UTC") if until else "unknown"
+        await m.answer(f"✅ Premium active.\nExpires: {until_txt}")
     else:
-        await m.answer(
-            t(lang, "not_premium") +
-            "\n\n💳 To upgrade, please contact support or visit our premium page."
-        )
+        await m.answer("❌ Premium not active.\nGet premium via referral: 10 referrals = 4 hours premium.")
