@@ -4,6 +4,7 @@ import asyncio
 from fastapi import FastAPI
 from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
+from aiogram.client.default import DefaultBotProperties
 from src.bot import register, set_commands
 
 logging.basicConfig(level=logging.INFO)
@@ -16,13 +17,16 @@ def home():
     return {"status": "active", "bot": "Edu Assam Bot"}
 
 async def run_bot():
-    bot = Bot(token=os.getenv("BOT_TOKEN"), parse_mode=ParseMode.HTML)
+    # Fixed: Use DefaultBotProperties instead of parse_mode parameter
+    bot = Bot(
+        token=os.getenv("BOT_TOKEN"), 
+        default=DefaultBotProperties(parse_mode=ParseMode.HTML)
+    )
     dp = Dispatcher()
     
     # Register handlers and setup
     register(dp)
     await set_commands(bot)
-   
     
     logger.info("🤖 Bot started...")
     await dp.start_polling(bot)
