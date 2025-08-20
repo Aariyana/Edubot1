@@ -1,28 +1,25 @@
-# src/handlers/profile.py
-
-from aiogram import Router
-from aiogram.types import Message
+from aiogram import types, Router
 from aiogram.filters import Command
-from src.db import db
-from src.services.i18n import t
+from src.bot.utils.db import get_user
 
 router = Router()
 
-@router.message(Command("profile"))
-async def on_profile(m: Message):
-    lang = (m.from_user.language_code or "en").split("-")[0]
-    users = db.users
-    u = users.find_one({"tg_id": m.from_user.id})
-
-    if not u:
-        await m.answer(t(lang, "profile_not_found"))
+@router.message(Command("me"))
+async def user_profile(msg: types.Message):
+    user = await get_user(msg.from_user.id)  # await যোগ কৰক
+    if not user:
+        await msg.answer("✗ User not found. Please /start again.")
         return
 
-    text = (
-        f"👤 {u.get('name')}\n"
-        f"🌐 Lang: {u.get('lang')}\n"
-        f"⭐ Premium: {'Yes' if u.get('is_premium') else 'No'}\n"
-        f"🏆 Points: {u.get('reward_points', 0)}\n"
-        f"📄 Daily PDFs: {u.get('daily_pdf_count', 0)}"
-    )
-    await m.answer(text)
+    premium_text = "Yes" if user.get('is_premium') else "No"
+    
+    text = f"""
+    **Profile**
+    Name: {user.get('name', msg.from_user.first_name)}
+    Language: {user.get('lang', 'en')}
+    Premium: {premium_text}
+    Referrals: {len(user.get('referrals', []))}
+    Reward Points: {user.get('reward_points', 0)}
+    Daily PDFs: {user.get('daily_pdf_count', 0)}/3
+    """
+    await msg.answer(text, parse_mode="Markdown")
