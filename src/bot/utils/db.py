@@ -1,16 +1,31 @@
 from src.db import db
 
 async def get_user(tg_id: int):
-    return await db.users.find_one({"tg_id": tg_id})
+    try:
+        return await db.users.find_one({"tg_id": tg_id})
+    except:
+        return None
 
 async def get_top_users(limit=10):
-    return await db.users.find().sort("reward_points", -1).limit(limit).to_list(length=limit)
+    try:
+        return await db.users.find().sort("reward_points", -1).limit(limit).to_list(limit)
+    except:
+        return []
 
 async def count_users():
-    return await db.users.count_documents({})
+    try:
+        return await db.users.count_documents({})
+    except:
+        return 0
 
 async def get_all_users():
-    return await db.users.find().to_list(length=None)
+    try:
+        return await db.users.find().to_list(None)
+    except:
+        return []
 
 async def reset_daily_pdfs():
-    await db.users.update_many({}, {"$set": {"daily_pdf_count": 0}})
+    try:
+        await db.users.update_many({}, {"$set": {"daily_pdf_count": 0}})
+    except:
+        pass
