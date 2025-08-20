@@ -1,35 +1,34 @@
-import os
 import logging
+import os
 import asyncio
+
+from aiogram import Bot, Dispatcher, types
 from fastapi import FastAPI
-from aiogram import Bot, Dispatcher
-from aiogram.enums import ParseMode
-from aiogram.client.default import DefaultBotProperties
-from src.bot import register, set_commands
+import uvicorn
+
+TOKEN = os.getenv("BOT_TOKEN")
+bot = Bot(token=TOKEN)
+dp = Dispatcher(bot)
 
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
+# --- Bot command ---
+@dp.message_handler(commands=["start"])
+async def cmd_start(message: types.Message):
+    await message.reply("👋 Hello! Bot is running on Render Web Service.")
+
+# --- FastAPI app (keep port open for Render) ---
 app = FastAPI()
 
 @app.get("/")
-def home():
-    return {"status": "active", "bot": "Edu Assam Bot"}
+async def home():
+    return {"status": "ok", "message": "Edu Bot is alive"}
 
-async def run_bot():
-    # Fixed: Use DefaultBotProperties instead of parse_mode parameter
-    bot = Bot(
-        token=os.getenv("BOT_TOKEN"), 
-        default=DefaultBotProperties(parse_mode=ParseMode.HTML)
-    )
-    dp = Dispatcher()
-    
-    # Register handlers and setup
-    register(dp)
-    await set_commands(bot)
-    
-    logger.info("🤖 Bot started...")
-    await dp.start_polling(bot)
+async def start_bot():
+    # Run polling in background
+    asyncio.create_task(dp.start_polling())
+    # Run FastAPI server to open port
+    uvicorn.run(app, host="0.0.0.0", port=int(os.getenv("PORT", 10000)))
 
 if __name__ == "__main__":
-    asyncio.run(run_bot())
+    asyncio.run(start_bot())
