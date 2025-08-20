@@ -1,34 +1,36 @@
-import logging
-import os
 import asyncio
-
-from aiogram import Bot, Dispatcher, types
-from fastapi import FastAPI
-import uvicorn
-
-TOKEN = os.getenv("BOT_TOKEN")
-bot = Bot(token=TOKEN)
-dp = Dispatcher(bot)
+import logging
+from aiogram import Bot, Dispatcher
+from aiogram.enums import ParseMode
+from aiogram.types import Message
+from aiogram.filters import Command
 
 logging.basicConfig(level=logging.INFO)
 
-# --- Bot command ---
-@dp.message_handler(commands=["start"])
-async def cmd_start(message: types.Message):
-    await message.reply("👋 Hello! Bot is running on Render Web Service.")
+# Bot init
+BOT_TOKEN = "YOUR_BOT_TOKEN"
+bot = Bot(token=BOT_TOKEN, parse_mode=ParseMode.HTML)
 
-# --- FastAPI app (keep port open for Render) ---
-app = FastAPI()
+# Dispatcher init (no bot here)
+dp = Dispatcher()
 
-@app.get("/")
-async def home():
-    return {"status": "ok", "message": "Edu Bot is alive"}
 
-async def start_bot():
-    # Run polling in background
-    asyncio.create_task(dp.start_polling())
-    # Run FastAPI server to open port
-    uvicorn.run(app, host="0.0.0.0", port=int(os.getenv("PORT", 10000)))
+# Handlers
+@dp.message(Command("start"))
+async def start_cmd(message: Message):
+    await message.answer("👋 Hello! I am your Edu Bot. If you have any query send message at @abhijitedu")
+
+
+@dp.message(Command("help"))
+async def help_cmd(message: Message):
+    await message.answer("ℹ️ Use /start to begin.\nIf you face issues, contact admin @abhijitedu.")
+
+
+# Run
+async def main():
+    logging.info("🤖 Bot starting...")
+    await dp.start_polling(bot)
+
 
 if __name__ == "__main__":
-    asyncio.run(start_bot())
+    asyncio.run(main())
